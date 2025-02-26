@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  r2dbc:
+    url: r2dbc:mariadb://localhost:3306/reactivedb
+    username: root
+    password: 1111
+
+  data:
+    r2dbc:
+      schema: auto
+
+  redis:
+    host: localhost
+    port: 6379
