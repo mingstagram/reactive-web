@@ -1,5 +1,6 @@
 package com.mpole.reactiveapp.service;
 
+import com.mpole.reactiveapp.kafka.KafkaProducerService;
 import com.mpole.reactiveapp.model.User;
 import com.mpole.reactiveapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ReactiveRedisTemplate<String, User> redisTemplate;
+    private final KafkaProducerService kafkaProducerService;
 
     /**
      * 사용자를 생성하고 Redis에 해당 사용자 정보를 저장합니다.
@@ -25,6 +27,7 @@ public class UserService {
         return userRepository.save(user) // 데이터베이스에 사용자 저장
                 // Redis에 사용자 정보를 "user:{id}" 형식으로 저장
                 .flatMap(savedUser -> redisTemplate.opsForValue().set("user:" + savedUser.getId(), savedUser)
+                        .then(kafkaProducerService.sendMassage("사용자 생성: " + savedUser.getName())) // Kafka 전송
                         .thenReturn(savedUser)); // 저장된 사용자 정보를 반환
     }
 

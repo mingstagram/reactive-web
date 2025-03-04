@@ -34,7 +34,22 @@ public class RedisConfig {
     }
 
     @Bean
-    public ReactiveRedisTemplate<String, User> reactiveRedisTemplate(ReactiveRedisConnectionFactory factory) {
+    public ReactiveRedisTemplate<String, Object> reactiveRedisTemplate(ReactiveRedisConnectionFactory factory) {
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+
+        return new ReactiveRedisTemplate<>(
+                factory,
+                RedisSerializationContext
+                        .<String, Object>newSerializationContext(new StringRedisSerializer())
+                        .value(serializer)
+                        .key(new StringRedisSerializer())
+                        .build()
+        );
+    }
+
+    // ✅ 새로운 User 타입 RedisTemplate 추가 (UserService에서 사용 가능)
+    @Bean
+    public ReactiveRedisTemplate<String, User> userReactiveRedisTemplate(ReactiveRedisConnectionFactory factory) {
         Jackson2JsonRedisSerializer<User> serializer = new Jackson2JsonRedisSerializer<>(User.class);
 
         return new ReactiveRedisTemplate<>(

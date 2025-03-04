@@ -24,10 +24,10 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{id}")
-    public Mono<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
-    }
+//    @GetMapping("/{id}")
+//    public Mono<User> getUserById(@PathVariable Long id) {
+//        return userService.getUserById(id);
+//    }
 
     @PutMapping("/{id}")
     public Mono<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {

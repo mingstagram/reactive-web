@@ -14,3 +14,14 @@ spring:
   redis:
     host: 172.25.54.32
     port: 6379
+
+  kafka:
+    bootstrap-servers: 172.25.54.32:9092
+    consumer:
+      group-id: group_id
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    listener:
+      ack-mode: manual
