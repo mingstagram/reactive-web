@@ -43,12 +43,12 @@ Kafka를 사용하여 **이벤트 스트리밍**, Redis를 활용하여 **고속
 ---
 
 ## 📌 기술 검토 문서
-| 문서명                                                   | 설명            | 
-|-------------------------------------------------------|---------------|
-| [Kafka 설정 검토](https://markdownlivepreview.com/)       | Kafka 설정 및 문제 해결            | 
-| [Redis 설정 검토 ](https://markdownlivepreview.com/)      | Redis 설정 및 캐싱 최적화           |
-| [WebFlux + R2DBC](https://markdownlivepreview.com/)   | 비동기 데이터 처리 아키텍처       |
-| [Kafka vs Redis 비교](https://markdownlivepreview.com/) | Kafka와 Redis의 차이점 및 활용 사례     |  
+| 문서명                                                              | 설명            | 
+|------------------------------------------------------------------|---------------|
+| [Kafka 설정 검토](docs/tech-review/tech-review-kafka-setup.md)       | Kafka 설정 및 문제 해결            | 
+| [Redis 설정 검토 ](docs/tech-review/tech-review-redis-setup.md)      | Redis 설정 및 캐싱 최적화           |
+| [WebFlux + R2DBC](docs/tech-review/tech-review-webflux-r2dbc.md) | 비동기 데이터 처리 아키텍처       |
+| [Kafka vs Redis 비교](docs/tech-review/tech-review-redis-vs-kafka.md)                  | Kafka와 Redis의 차이점 및 활용 사례     |  
 
 ---
 
