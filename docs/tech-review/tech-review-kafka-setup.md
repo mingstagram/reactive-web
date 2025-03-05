@@ -26,3 +26,30 @@ spring:
 ```init
 KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://172.25.54.32:9092
 ```
+---
+### 🔹 이슈 2: kafka 테스트 코드에서 `sendMessage()`호출되지 않는 문제
+**원인**: 
+- `KafkaTemplate.send()`가 비동기적으로 실행되면서 테스트에서 `verify()`가 실행되기 전에 종료됨
+- `Mono.fromRunnable()`이 즉시 실행되지 않아 메시지가 전송되지 않음
+
+**해결책**:
+1. 테스트에서 `KafkaProducerService`의 Mock 설정 추가
+```
+when(kafkaProducerService.sendMessage(anyString())).thenReturn(Mono.empty());
+```
+2. `sendMessage()` 내부에서 `Mono.defer()`로 변경하여 실행 시점 보장
+```java
+public Mono<Void> sendMessage(String message) {
+    return Mono.defer(() -> {
+        kafkaTemplate.send(TOPIC, message);
+        return Mono.empty();
+    }).doOnNext(result -> System.out.println("Kafka 메시지 전송 완료: " + message))
+      .then();
+}
+```
+3. 테스트에서 `verify()` 추가하여 호출 여부 확인
+```
+verify(kafkaProducerService, times(1)).sendMessage(anyString());
+```
+✅ 위 조치를 적용한 후, 테스트에서 sendMessage() 호출이 정상적으로 검증됨.
+---
