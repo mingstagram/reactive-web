@@ -1,5 +1,6 @@
 package com.mpole.reactiveapp.service;
 
+import com.mpole.reactiveapp.kafka.KafkaProducerService;
 import com.mpole.reactiveapp.model.User;
 import com.mpole.reactiveapp.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +12,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.ReactiveValueOperations;
+import org.springframework.kafka.core.KafkaTemplate;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -28,6 +32,9 @@ public class UserServiceTest {
 
     @Mock
     private ReactiveValueOperations<String, User> valueOperations;
+
+    @Mock
+    private KafkaProducerService kafkaProducerService;
 
     @InjectMocks
     private UserService userService;
@@ -53,6 +60,10 @@ public class UserServiceTest {
         when(userRepository.save(user)).thenReturn(Mono.just(user));
         when(valueOperations.set("user:1", user)).thenReturn(Mono.just(true));
 
+        // Kafka 메시지 전송을 Mock 처리
+        when(kafkaProducerService.sendMessage(anyString()))
+                .thenReturn(Mono.empty());
+
         // When: 사용자 생성 메서드를 호출
         Mono<User> createdUserMono = userService.createUser(user);
 
@@ -68,7 +79,20 @@ public class UserServiceTest {
         verify(userRepository).save(user);
         // Redis에 사용자 정보가 캐시되었는지 확인
         verify(valueOperations).set("user:1", user);
+        // Kafka 메시지 전송 검증
+        verify(kafkaProducerService).sendMessage(anyString());
 
+    }
+
+    /**
+     * Kafka Consumer가 메시지를 정상적으로 수신하는지 검증합니다.
+     */
+    void kafkaConsumer_ShouldReceiveUserCreationMessage() {
+        // Given
+        String message = "User Created: John";
+
+//        // When
+//        userService.consu
     }
 
     /**

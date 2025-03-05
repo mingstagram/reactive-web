@@ -15,8 +15,10 @@ public class KafkaProducerService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private static final String TOPIC = "user-topic";
 
-    public Mono<Void> sendMassage(String message) {
-        return Mono.fromRunnable(() -> kafkaTemplate.send(TOPIC, message));
+    public Mono<Void> sendMessage(String message) {
+        return Mono.fromRunnable(() -> kafkaTemplate.send(TOPIC, message))
+                .doOnNext(result -> System.out.println("🔹 Kafka 메시지 전송 완료: " + message))
+                .then();
     }
 
 }

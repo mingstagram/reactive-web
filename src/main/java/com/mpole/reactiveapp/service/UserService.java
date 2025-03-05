@@ -27,7 +27,7 @@ public class UserService {
         return userRepository.save(user) // 데이터베이스에 사용자 저장
                 // Redis에 사용자 정보를 "user:{id}" 형식으로 저장
                 .flatMap(savedUser -> redisTemplate.opsForValue().set("user:" + savedUser.getId(), savedUser)
-                        .then(kafkaProducerService.sendMassage("사용자 생성: " + savedUser.getName())) // Kafka 전송
+                        .then(kafkaProducerService.sendMessage("사용자 생성: " + savedUser.getName())) // Kafka 전송
                         .thenReturn(savedUser)); // 저장된 사용자 정보를 반환
     }
 
