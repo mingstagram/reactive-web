@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# 최상위 폴더의 README.md 포함
+!.README.md
