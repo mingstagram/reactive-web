@@ -1,3 +1,6 @@
+# README.md 무시 (최상위 폴더)
+README.md
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -31,6 +34,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-# 최상위 폴더의 README.md 포함
-!.README.md
