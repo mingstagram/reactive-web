@@ -85,17 +85,6 @@ public class UserServiceTest {
     }
 
     /**
-     * Kafka Consumer가 메시지를 정상적으로 수신하는지 검증합니다.
-     */
-    void kafkaConsumer_ShouldReceiveUserCreationMessage() {
-        // Given
-        String message = "User Created: John";
-
-//        // When
-//        userService.consu
-    }
-
-    /**
      * 특정 ID를 가진 사용자의 정보를 조회하는 기능을 검증합니다.
      * 시나리오: Redis에 사용자 정보가 없을 때, 데이터베이스에서 조회하는지 확인합니다.
      * 기대 결과: 데이터베이스에서 사용자 정보를 조회한 후 Redis에 저장합니다.
@@ -149,6 +138,10 @@ public class UserServiceTest {
         // When: 사용자 업데이트 메서드 호출
         Mono<User> updatedUserMono = userService.updateUser(1L, updatedUser);
 
+        // Kafka 메시지 전송을 Mock 처리
+        when(kafkaProducerService.sendMessage(anyString()))
+                .thenReturn(Mono.empty());
+
         // Then: 반환된 값 검증
         StepVerifier.create(updatedUserMono)
                 .expectNextMatches(user -> {
@@ -162,19 +155,26 @@ public class UserServiceTest {
         verify(userRepository).save(any(User.class));
         // Redis에 사용자 정보가 업데이트 되었는지 확인
         verify(valueOperations).set(eq("user:1"), any(User.class));
+        // Kafka 메시지 전송 검증
+        verify(kafkaProducerService).sendMessage(anyString());
 
     }
 
     /**
      * 사용자를 삭제하는 기능을 검증합니다.
-     * 시나리오: 특정 ID를 가진 사용자를 삭제하고, 데이터베이스 및 Redis에서 제거합니다.
+     * 시나리오: 특정 ID를 가진 사용자를 삭제하고, 데이터베이스 및 Redis에서 제거하고, kafka 메시지를  보냅니다..
      * 기대 결과: 데이터베이스와 Redis에서 사용자 정보가 삭제됩니다.
      */
     @Test
     void deleteUser_ShouldRemoveFromDB_AndRedis() {
-        // Given: Redis 및 데이터베이스에서 삭제될 사용자 ID
+        // Given
+        when(userRepository.findById(1L)).thenReturn(Mono.just(new User(1L, "John Doe", "john@example.com")));
         when(valueOperations.delete("user:1")).thenReturn(Mono.just(true));
         when(userRepository.deleteById(1L)).thenReturn(Mono.empty());
+
+        // Kafka 메시지 전송을 Mock 처리
+        when(kafkaProducerService.sendMessage(anyString()))
+                .thenReturn(Mono.empty());
 
         // When: 사용자 삭제 메서드 호출
         Mono<Void> deleteMono = userService.deleteUser(1L);
@@ -187,6 +187,8 @@ public class UserServiceTest {
         verify(valueOperations).delete("user:1");
         // 데이터베이스에서 삭제되었는지 확인
         verify(userRepository).deleteById(1L);
+        // Kafka 메시지 전송 검증
+        verify(kafkaProducerService).sendMessage(anyString());
 
     }
 

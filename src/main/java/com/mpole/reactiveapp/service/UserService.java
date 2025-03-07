@@ -72,7 +72,9 @@ public class UserService {
                     return redisTemplate.opsForValue().set("user:" + id, updatedUser)
                             .doOnSuccess(success -> System.out.println("✅ Redis 저장 완료: " + success))
                             .thenReturn(updatedUser);
-                });
+                })
+                .flatMap(updatedUser -> kafkaProducerService.sendMessage("사용자 수정: " + updatedUser.getName())
+                        .thenReturn(updatedUser)); // ✅ Kafka 메시지를 보낸 후 반환;
     }
 
     /**
@@ -84,8 +86,14 @@ public class UserService {
      */
     public Mono<Void> deleteUser(Long id) {
         // Redis에서 사용자 정보를 "user:{id}" 형식으로 삭제
-        return redisTemplate.opsForValue().delete("user:" + id)  // Redis에서 삭제하고
-                .then(userRepository.deleteById(id));  // 데이터베이스에서 사용자 삭제
+        return redisTemplate.opsForValue().delete("user:" + id)  // Redis에서 삭제
+                .then(userRepository.findById(id))
+                .switchIfEmpty(Mono.error(new RuntimeException("사용자가 존재하지 않습니다: " + id)))
+                .flatMap(user ->
+                    kafkaProducerService.sendMessage("사용자 삭제: " +  user.getName())
+                            .then(userRepository.deleteById(id)) // DB에서 삭제
+                )
+                .then(); // 최종 반환
     }
 
 }
