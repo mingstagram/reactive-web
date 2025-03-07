@@ -29,4 +29,11 @@
     - 각각의 장단점 및 적절한 사용 시나리오
     - 프로젝트에서 어떤 경우에 Redis 또는 Kafka를 선택해야 하는지 설명
 
+- **[JUnit](tech-review/tech-review-junit-setup.md)**
+    - JUnit을 활용한 테스트 코드 작성 가이드
+    - Reactive App에서 WebFlux 기반의 비동기 코드 테스트 방법
+    - Mockito와 함께 사용하는 Mock 객체 생성 및 검증
+    - Kafka 및 Redis 관련 서비스 테스트 코드 예제
+    - 주요 트러블슈팅 (Mock 설정 문제, NPE 오류, 비동기 검증 실패 등)
+
 ---
