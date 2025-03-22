@@ -1,6 +1,6 @@
 # 🚀 Reactive App 프로젝트
 
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7+-green?style=flat)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.4+-green?style=flat)
 ![WebFlux](https://img.shields.io/badge/WebFlux-Reactive-blue?style=flat)
 ![Kafka](https://img.shields.io/badge/Kafka-Message%20Queue-orange?style=flat)
 ![Redis](https://img.shields.io/badge/Redis-Cache-red?style=flat)
